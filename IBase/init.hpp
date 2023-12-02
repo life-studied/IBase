@@ -14,7 +14,7 @@
 #include "imgui_impl_opengl3.h"
 #include "WinRoaming/Window.h"
 #include "LoginWindow.h"
-
+#include "AdminWindow.h"
 #define SystemName "IBase System"
 
 namespace IBase
@@ -84,6 +84,8 @@ window::window_register::getInstance().register_class(#name, []() {return new na
 		{
 			using namespace IWindows;
 			regisWindow(Login);
+			regisWindow(Admin);
+			
 		}
 	}
 }

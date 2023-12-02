@@ -66,6 +66,9 @@
     <ClCompile Include="LoginWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="AdminWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdparty\include\Singleton\Singleton.hpp">
@@ -82,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="..\3rdparty\include\WinRoaming\Singleton.hpp">
       <Filter>3rdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="AdminWindow.h">
+      <Filter>头文件\windows</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

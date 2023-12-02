@@ -145,6 +145,7 @@
     <ClCompile Include="..\3rdparty\include\MysqlConn\MysqlOP.cpp" />
     <ClCompile Include="..\3rdparty\include\WinRoaming\Window.cpp" />
     <ClCompile Include="..\3rdparty\include\WinRoaming\WinRoam.cpp" />
+    <ClCompile Include="AdminWindow.cpp" />
     <ClCompile Include="LoginWindow.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -152,6 +153,7 @@
     <ClInclude Include="..\3rdparty\include\Singleton\Singleton.hpp" />
     <ClInclude Include="..\3rdparty\include\WinRoaming\reflect.hpp" />
     <ClInclude Include="..\3rdparty\include\WinRoaming\Singleton.hpp" />
+    <ClInclude Include="AdminWindow.h" />
     <ClInclude Include="init.hpp" />
     <ClInclude Include="LoginWindow.h" />
   </ItemGroup>

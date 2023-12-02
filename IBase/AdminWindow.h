@@ -5,14 +5,12 @@ namespace IBase
 	namespace IWindows
 	{
 		using namespace window;
-		class LoginWindow : public Window
+		class AdminWindow : public Window
 		{
 		public:
-			LoginWindow(string name = "Login", string _parent = "") :Window(name, _parent) {}
+			AdminWindow(string name = "Admin", string _parent = "Login") :Window(name, _parent) {}
 			virtual string drawNext(unordered_map<string, Window*>& windowlist) override;
-			string account;
-			string password;
 		};
-		
+
 	}
 }
