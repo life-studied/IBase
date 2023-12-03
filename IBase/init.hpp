@@ -15,6 +15,7 @@
 #include "WinRoaming/Window.h"
 #include "LoginWindow.h"
 #include "AdminWindow.h"
+#include "RegisterWindow.h"
 #define SystemName "IBase System"
 
 namespace IBase
@@ -78,13 +79,16 @@ namespace IBase
 			//addflag(ImGuiWindowFlags_NoDecoration);
 			return wflags;
 		}
+
 #define regisWindow(name)            \
 window::window_register::getInstance().register_class(#name, []() {return new name##Window; })
+
 		void regisWindows()
 		{
 			using namespace IWindows;
 			regisWindow(Login);
 			regisWindow(Admin);
+			regisWindow(Register);
 			
 		}
 	}

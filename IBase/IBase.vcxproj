@@ -148,14 +148,15 @@
     <ClCompile Include="AdminWindow.cpp" />
     <ClCompile Include="LoginWindow.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RegisterWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\3rdparty\include\Singleton\Singleton.hpp" />
     <ClInclude Include="..\3rdparty\include\WinRoaming\reflect.hpp" />
     <ClInclude Include="..\3rdparty\include\WinRoaming\Singleton.hpp" />
     <ClInclude Include="AdminWindow.h" />
     <ClInclude Include="init.hpp" />
     <ClInclude Include="LoginWindow.h" />
+    <ClInclude Include="RegisterWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

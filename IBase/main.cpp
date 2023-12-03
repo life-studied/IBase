@@ -13,7 +13,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	// glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);  // 设置 背景窗口 透明
+	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);  // 设置 背景窗口 透明
 
 	// 创建窗口并给予窗口指针
 	Windows = glfwCreateWindow(900, 800, SystemName, NULL, NULL);

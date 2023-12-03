@@ -4,7 +4,7 @@
 #include <mutex>
 #include <condition_variable>
 #include "MysqlConn.h"
-#include "Singleton.hpp"
+#include "WinRoaming/Singleton.hpp"
 namespace DBConn
 {
 	using std::queue;

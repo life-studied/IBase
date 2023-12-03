@@ -69,11 +69,11 @@
     <ClCompile Include="AdminWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="RegisterWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\3rdparty\include\Singleton\Singleton.hpp">
-      <Filter>3rdparty</Filter>
-    </ClInclude>
     <ClInclude Include="init.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -87,6 +87,9 @@
       <Filter>3rdparty</Filter>
     </ClInclude>
     <ClInclude Include="AdminWindow.h">
+      <Filter>头文件\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="RegisterWindow.h">
       <Filter>头文件\windows</Filter>
     </ClInclude>
   </ItemGroup>
