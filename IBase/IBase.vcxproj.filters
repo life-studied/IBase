@@ -72,6 +72,9 @@
     <ClCompile Include="RegisterWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="RegisterSuccessWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="init.hpp">
@@ -90,6 +93,12 @@
       <Filter>头文件\windows</Filter>
     </ClInclude>
     <ClInclude Include="RegisterWindow.h">
+      <Filter>头文件\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="RegisterSuccessWindow.h">
+      <Filter>头文件\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureLoading.hpp">
       <Filter>头文件\windows</Filter>
     </ClInclude>
   </ItemGroup>

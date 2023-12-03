@@ -28,25 +28,30 @@ string IBase::IWindows::RegisterWindow::drawNext(unordered_map<string, Window*>&
 string IBase::IWindows::RegisterWindow::registerUser()
 {
 	size_t min_length = 6;
-	if (username.size() < min_length) return { u8"用户名低于" + to_string(min_length) + "位" };
-	if (password.size() < min_length) return { u8"密码低于" + to_string(min_length) + "位" };
+	if (username.size() < min_length) return { u8"用户名低于" + to_string(min_length) + u8"位" };
+	if (password.size() < min_length) return { u8"密码低于" + to_string(min_length) + u8"位" };
 	if (!checkUserName())	return { u8"用户名已存在" };
 	if (!checkPass())	return { u8"密码存在特殊字符或空格" };
 	
+	// TODO
 	// 生成随机ID并检查唯一性
 	while(true)
 	{ }
-	// 注册用户
+	// TODO:在数据库中注册用户
 
 	return {};
 }
 
 bool IBase::IWindows::RegisterWindow::checkUserName()
 {
+	// TODO:检查username是否唯一
 	return false;
 }
 
 bool IBase::IWindows::RegisterWindow::checkPass()
 {
-	return false;
+	string badcharlist = " !@#$%^&*(){}[]/-+;\"";
+	if (password.find_first_of(badcharlist) != string::npos)
+		return false;
+	return true;
 }

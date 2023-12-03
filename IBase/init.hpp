@@ -16,6 +16,7 @@
 #include "LoginWindow.h"
 #include "AdminWindow.h"
 #include "RegisterWindow.h"
+#include "RegisterSuccessWindow.h"
 #define SystemName "IBase System"
 
 namespace IBase
@@ -89,7 +90,9 @@ window::window_register::getInstance().register_class(#name, []() {return new na
 			regisWindow(Login);
 			regisWindow(Admin);
 			regisWindow(Register);
+			regisWindow(RegisterSuccess);
 			
 		}
 	}
 }
+

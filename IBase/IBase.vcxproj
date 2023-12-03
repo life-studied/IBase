@@ -106,7 +106,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../3rdparty/include/Singleton;../3rdparty/include/MysqlConn;../3rdparty/include/Mysql;../3rdparty/include/Jsoncpp;../3rdparty/include/ImGui;../3rdparty/include/GLEW;../3rdparty/WinRoaming;../3rdparty/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../3rdparty/include/stb;../3rdparty/include/Singleton;../3rdparty/include/MysqlConn;../3rdparty/include/Mysql;../3rdparty/include/Jsoncpp;../3rdparty/include/ImGui;../3rdparty/include/GLEW;../3rdparty/WinRoaming;../3rdparty/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -121,7 +121,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../3rdparty/include/Singleton;../3rdparty/include/MysqlConn;../3rdparty/include/Mysql;../3rdparty/include/Jsoncpp;../3rdparty/include/ImGui;../3rdparty/include/GLEW;../3rdparty/WinRoaming;../3rdparty/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../3rdparty/include/stb;../3rdparty/include/Singleton;../3rdparty/include/MysqlConn;../3rdparty/include/Mysql;../3rdparty/include/Jsoncpp;../3rdparty/include/ImGui;../3rdparty/include/GLEW;../3rdparty/WinRoaming;../3rdparty/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -148,6 +150,7 @@
     <ClCompile Include="AdminWindow.cpp" />
     <ClCompile Include="LoginWindow.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RegisterSuccessWindow.cpp" />
     <ClCompile Include="RegisterWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -156,7 +159,9 @@
     <ClInclude Include="AdminWindow.h" />
     <ClInclude Include="init.hpp" />
     <ClInclude Include="LoginWindow.h" />
+    <ClInclude Include="RegisterSuccessWindow.h" />
     <ClInclude Include="RegisterWindow.h" />
+    <ClInclude Include="TextureLoading.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
