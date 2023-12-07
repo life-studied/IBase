@@ -17,6 +17,8 @@
 #include "AdminWindow.h"
 #include "RegisterWindow.h"
 #include "RegisterSuccessWindow.h"
+#include "FanWindow.h"
+#include "MemberWindow.h"
 #define SystemName "IBase System"
 
 namespace IBase
@@ -25,8 +27,8 @@ namespace IBase
 	{
 		void ioInit(ImGuiIO& io)
 		{
-			io.Fonts->AddFontFromFileTTF("SmileySans-Oblique.ttf", 25, nullptr, io.Fonts->GetGlyphRangesChineseFull());
-
+			io.Fonts->AddFontFromFileTTF("resources/SmileySans-Oblique.ttf", 25, nullptr, io.Fonts->GetGlyphRangesChineseFull());
+			io.IniFilename = "Configs/imGuiConfig/imgui.ini";
 			//允許停靠
 			io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 			//視口設置無裝飾
@@ -91,6 +93,8 @@ window::window_register::getInstance().register_class(#name, []() {return new na
 			regisWindow(Admin);
 			regisWindow(Register);
 			regisWindow(RegisterSuccess);
+			regisWindow(Fan);
+			regisWindow(Member);
 			
 		}
 	}

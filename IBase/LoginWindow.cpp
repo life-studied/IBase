@@ -4,7 +4,7 @@
 #include "MysqlOP.h"
 #define ADMIN "Admin"
 #define MEMBER "Member"
-#define FANS "Fans"
+#define FANS "Fan"
 using namespace IBase::IWindows;
 using namespace DBConn::MysqlOP;
 IBase::IWindows::LoginWindow::LoginWindow(string name, string _parent) :Window(name, _parent)
@@ -14,6 +14,7 @@ IBase::IWindows::LoginWindow::LoginWindow(string name, string _parent) :Window(n
 	levelMap[userLevel::Member] = MEMBER;
 	levelMap[userLevel::Fans] = FANS;
 }
+
 std::string IBase::IWindows::LoginWindow::drawNext(unordered_map<string, Window*>& windowlist)
 {
 	using namespace ImGui;
@@ -30,7 +31,7 @@ std::string IBase::IWindows::LoginWindow::drawNext(unordered_map<string, Window*
 	static int my_image_width = 0;
 	static int my_image_height = 0;
 	static GLuint my_image_texture = 0;
-	static bool ret = LoadTextureFromFile("./circle-IBase.png", &my_image_texture, &my_image_width, &my_image_height);
+	static bool ret = LoadTextureFromFile("resources/circle-IBase.png", &my_image_texture, &my_image_width, &my_image_height);
 	if (ret) 
 	{ 
 		SetCursorPosX(width / 2);
@@ -80,15 +81,18 @@ userLevel IBase::IWindows::LoginWindow::checkPass()
 	if (!safeCheck())
 		return userLevel::None;
 	auto sql = string("SELECT permission FROM Account WHERE account=") + account + " AND password='" + password + "'";
-
-	auto Data = MysqlOP::countNumber(sql);
-	if (Data.data.empty())
+	
+	auto Data = MysqlOP<root>::query(sql);
+	
+	if (Data.content.empty())
 		return userLevel::None;
-	else if (Data.data == ADMIN)
+
+	auto identify = Data.content[0][0];
+	if (identify == ADMIN)
 		return userLevel::Admin;
-	else if (Data.data == MEMBER)
+	else if (identify == MEMBER)
 		return userLevel::Member;
-	else if (Data.data == FANS)
+	else if (identify == FANS)
 		return userLevel::Fans;
 	else
 		return userLevel::None;

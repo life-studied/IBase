@@ -19,6 +19,12 @@
     <Filter Include="头文件\windows">
       <UniqueIdentifier>{4fdd414a-0ff6-4514-8543-0cd8ff4c48ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\windows">
+      <UniqueIdentifier>{fd3f9eda-728b-45e9-b5ad-3864e0c0dfe5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\picture">
+      <UniqueIdentifier>{7a71b1ff-af1d-4db7-99be-42818c134921}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -63,16 +69,22 @@
     <ClCompile Include="..\3rdparty\include\WinRoaming\WinRoam.cpp">
       <Filter>3rdparty</Filter>
     </ClCompile>
-    <ClCompile Include="LoginWindow.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="AdminWindow.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\windows</Filter>
     </ClCompile>
-    <ClCompile Include="RegisterWindow.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="LoginWindow.cpp">
+      <Filter>源文件\windows</Filter>
     </ClCompile>
     <ClCompile Include="RegisterSuccessWindow.cpp">
+      <Filter>源文件\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="RegisterWindow.cpp">
+      <Filter>源文件\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="FanWindow.cpp">
+      <Filter>源文件\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="MemberWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -99,6 +111,12 @@
       <Filter>头文件\windows</Filter>
     </ClInclude>
     <ClInclude Include="TextureLoading.hpp">
+      <Filter>头文件\picture</Filter>
+    </ClInclude>
+    <ClInclude Include="FanWindow.h">
+      <Filter>头文件\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="MemberWindow.h">
       <Filter>头文件\windows</Filter>
     </ClInclude>
   </ItemGroup>
