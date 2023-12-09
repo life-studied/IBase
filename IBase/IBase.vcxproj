@@ -111,8 +111,9 @@
       <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -161,12 +162,14 @@
     <ClInclude Include="..\3rdparty\include\WinRoaming\reflect.hpp" />
     <ClInclude Include="..\3rdparty\include\WinRoaming\Singleton.hpp" />
     <ClInclude Include="AdminWindow.h" />
+    <ClInclude Include="Data.hpp" />
     <ClInclude Include="FanWindow.h" />
     <ClInclude Include="init.hpp" />
     <ClInclude Include="LoginWindow.h" />
     <ClInclude Include="MemberWindow.h" />
     <ClInclude Include="RegisterSuccessWindow.h" />
     <ClInclude Include="RegisterWindow.h" />
+    <ClInclude Include="sqlpre.h" />
     <ClInclude Include="TextureLoading.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

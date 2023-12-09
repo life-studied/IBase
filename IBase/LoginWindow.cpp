@@ -2,11 +2,13 @@
 #include "imgui.h"
 #include "TextureLoading.hpp"
 #include "MysqlOP.h"
+#include "sqlpre.h"
 #define ADMIN "Admin"
 #define MEMBER "Member"
 #define FANS "Fan"
 using namespace IBase::IWindows;
 using namespace DBConn::MysqlOP;
+using namespace SqlStr;
 IBase::IWindows::LoginWindow::LoginWindow(string name, string _parent) :Window(name, _parent)
 {
 	levelMap[userLevel::None] = getName();
@@ -46,6 +48,11 @@ std::string IBase::IWindows::LoginWindow::drawNext(unordered_map<string, Window*
 	account = AccountBox;
 	password = PasswordBox;
 
+	// permission radio button
+	static unsigned char selected = 1;
+	if (RadioButton(u8"管理员", selected == 1)) selected = 1; SameLine();
+	if (RadioButton(u8"乐队成员", selected == 2))selected = 2; SameLine();
+	if (RadioButton(u8"粉丝", selected == 3))selected = 3; 
 	// buttons
 	SetCursorPosX(width / 10 * 8);
 	bool click = Button(u8"登录"); SameLine();
@@ -76,11 +83,42 @@ std::string IBase::IWindows::LoginWindow::drawNext(unordered_map<string, Window*
 	return getName();
 }
 
+void IBase::IWindows::LoginWindow::clearPass()
+{
+	password.clear();
+}
+
+void IBase::IWindows::LoginWindow::clear()
+{
+	account.clear();
+	password.clear();
+}
+
+string IBase::IWindows::LoginWindow::getPass()
+{
+	return password;
+}
+
+string IBase::IWindows::LoginWindow::getAccount()
+{
+	return account;
+}
+
+void IBase::IWindows::LoginWindow::setPass(string _password)
+{
+	password = _password;
+}
+
+void IBase::IWindows::LoginWindow::setAccount(string _account)
+{
+	account = _account;
+}
+
 userLevel IBase::IWindows::LoginWindow::checkPass()
 {
 	if (!safeCheck())
 		return userLevel::None;
-	auto sql = string("SELECT permission FROM Account WHERE account=") + account + " AND password='" + password + "'";
+	auto sql = paddingSql("SELECT permission FROM Account WHERE account='?' AND password='?'", account, password);
 	
 	auto Data = MysqlOP<root>::query(sql);
 	
