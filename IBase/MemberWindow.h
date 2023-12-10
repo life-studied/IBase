@@ -10,6 +10,8 @@ namespace IBase
 		public:
 			MemberWindow(string name = "Member", string _parent = "Login") :Window(name, _parent) {}
 			virtual string drawNext(unordered_map<string, Window*>& windowlist) override;
+		private:
+			
 		};
 
 	}
