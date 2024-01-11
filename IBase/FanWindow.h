@@ -25,12 +25,25 @@ namespace IBase
 			std::vector<AlbumData> albumlikes;
 			std::vector<SongData> songlikes;
 			std::vector<ConcertData> concertattends;
+			
+		private:
 			void init(string account, string password);
 			void initFanData(string account, string passwords);
 			void initBandData();
 			void initAlbumData();
 			void initSongData();
 			void initConcertData();
+
+			void insertLikeBand(string name);
+			void insertLikeAlbum(string name);
+			void insertLikeSong(string name);
+			void insertLikeConcert(string name);
+
+			tuple<vector<IBase::IWindows::FanWindow::ConcertData>,
+				vector<IBase::IWindows::FanWindow::AlbumData>,
+				vector<IBase::IWindows::FanWindow::SongData>,
+				vector<IBase::IWindows::FanWindow::BandData>> 
+				searchByName(string s);
 		};
 
 	}

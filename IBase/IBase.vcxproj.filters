@@ -31,6 +31,12 @@
     <Filter Include="头文件\data">
       <UniqueIdentifier>{2c23db9a-bfe1-47a2-a282-a74e85f0aaf9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\helpers">
+      <UniqueIdentifier>{514afff7-b380-4c94-824e-b58ec302b643}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\widgetTools">
+      <UniqueIdentifier>{e2281772-2b5f-4fa3-a13a-c84488406299}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -130,6 +136,12 @@
     </ClInclude>
     <ClInclude Include="Data.hpp">
       <Filter>头文件\data</Filter>
+    </ClInclude>
+    <ClInclude Include="helperWindows.hpp">
+      <Filter>头文件\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="ChildWindow.hpp">
+      <Filter>头文件\widgetTools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -3,10 +3,15 @@
 #include "LoginWindow.h"
 #include "sqlpre.h"
 #include "MysqlOP.h"
+#include <tuple>
+#include "ChildWindow.hpp"
+
 using namespace std;
 using namespace ImGui;
 using namespace SqlStr;
 using namespace DBConn::MysqlOP;
+using namespace IBase::WidgetTools;
+
 string IBase::IWindows::FanWindow::drawNext(unordered_map<string, Window*>& windowlist)
 {
 	static bool clear = false;
@@ -111,13 +116,26 @@ string IBase::IWindows::FanWindow::drawNext(unordered_map<string, Window*>& wind
 		{
 			static char searchBox[50]{ u8"请输入搜索条件" };
 			static bool isSearchClick = false;
-			static vector<ownData<BandData>> searchRes{};
+			static vector<ConcertData> res_concert;
+			static vector<BandData> res_band;
+			static vector<AlbumData> res_album;
+			static vector<SongData> res_song;
+			static ChildWindow concert_child_window(&res_concert, u8"演唱会", { u8"演唱会名：",u8"时间：",u8"地点：",u8"乐队名：" });
+			static ChildWindow album_child_window(&res_album, u8"专辑", { u8"专辑名：",u8"时间：",u8"介绍：",u8"乐队名：" });
 			InputText(u8" ", searchBox, IM_ARRAYSIZE(searchBox)); SameLine(); isSearchClick = Button(u8"搜索");
 			if (isSearchClick)
 			{
-				searchRes.clear();
-				// auto band_all_info = MysqlOP<fan>::query("select * from band");
+				auto res = searchByName(searchBox);
+				res_concert = get<0>(res);
+				res_album = get<1>(res);
+				res_song = get<2>(res);
+				res_band = get<3>(res);
 			}
+			concert_child_window.showList();
+			album_child_window.showList();
+			
+			concert_child_window.showWindow(u8"喜欢");
+			album_child_window.showWindow(u8"喜欢");
 			EndTabItem();
 		}
 		EndTabBar();
@@ -284,5 +302,90 @@ void IBase::IWindows::FanWindow::initConcertData()
 			temp.strs[i] = line[i];
 		concertattends.push_back(temp);
 	}
+}
+
+void IBase::IWindows::FanWindow::insertLikeBand(string name)
+{
+	MysqlOP<fan>::query(paddingSql(""));
+}
+
+void IBase::IWindows::FanWindow::insertLikeAlbum(string name)
+{
+
+}
+
+void IBase::IWindows::FanWindow::insertLikeSong(string name)
+{
+
+}
+
+void IBase::IWindows::FanWindow::insertLikeConcert(string name)
+{
+
+}
+
+tuple<vector<IBase::IWindows::FanWindow::ConcertData>, 
+	vector<IBase::IWindows::FanWindow::AlbumData>, 
+	vector<IBase::IWindows::FanWindow::SongData>, 
+	vector<IBase::IWindows::FanWindow::BandData>> 
+IBase::IWindows::FanWindow::searchByName(string s)
+{
+	vector<ConcertData> res_concert_list;
+	vector<AlbumData> res_album_list;
+	vector<SongData> res_song_list;
+	vector<BandData> res_band_list;
+
+	auto concert_info_list = MysqlOP<fan>::query(paddingSql(
+		"SELECT concert.`name`,concert.time,concert.place,band.`name`\
+			FROM concert\
+			LEFT JOIN band ON band.id = concert.bandid\
+			WHERE concert.name Like '%?%' ",s));
+	for (auto& line : concert_info_list.content)
+	{
+		ConcertData temp{};
+		for (size_t i = 0; i < temp.size(); i++)
+			temp.strs[i] = line[i];
+		res_concert_list.push_back(temp);
+	}
+
+	auto album_info_list = MysqlOP<fan>::query(paddingSql(
+		"SELECT ab.`name`,ab.time,ab.intro,b.`name` bandname FROM album ab,band b\
+		WHERE ab.bandid = b.id AND ab.`name` LIKE '%?%'; ", s));
+	for (auto& line : album_info_list.content)
+	{
+		AlbumData temp{};
+		for (size_t i = 0; i < temp.size(); i++)
+			temp.strs[i] = line[i];
+		res_album_list.push_back(temp);
+	}
+
+	auto song_info_list = MysqlOP<fan>::query(paddingSql(
+		"SELECT songs.name,member.`name` authorname,album.`name` albumname FROM songs\
+		LEFT JOIN member ON songs.authorid = member.id\
+		LEFT JOIN album ON songs.albumid = album.id\
+		LEFT JOIN songlikes ON songlikes.songid = songs.id\
+		WHERE songs.name LIKE '%?%'; ", s));
+	for (auto& line : song_info_list.content)
+	{
+		SongData temp{};
+		for (size_t i = 0; i < temp.size(); i++)
+			temp.strs[i] = line[i];
+		res_song_list.push_back(temp);
+	}
+
+	auto band_info_list = MysqlOP<fan>::query(paddingSql(
+		"select band.name,band.createtime,band.intro,band.leader from bandlikes \
+		LEFT JOIN band ON bandlikes.bandid=band.id \
+		WHERE band.name LIKE '%?%'", s));
+	for (auto& line : band_info_list.content)
+	{
+		BandData temp{};
+		for (size_t i = 0; i < temp.size(); i++)
+			temp.strs[i] = line[i];
+		res_band_list.push_back(temp);
+	}
+
+	return { res_concert_list,res_album_list,res_song_list,res_band_list };
+
 }
 

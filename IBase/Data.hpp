@@ -26,7 +26,7 @@ namespace IBase
 					strcpy_s(boxes[i], strs[i].c_str());
 				}
 			}
-			inline auto size() { return N; }
+			inline static auto size() { return N; }
 		};
 
 		template <typename T>

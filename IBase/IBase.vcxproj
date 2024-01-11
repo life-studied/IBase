@@ -107,7 +107,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../3rdparty/include/stb;../3rdparty/include/Singleton;../3rdparty/include/MysqlConn;../3rdparty/include/Mysql;../3rdparty/include/Jsoncpp;../3rdparty/include/ImGui;../3rdparty/include/GLEW;../3rdparty/WinRoaming;../3rdparty/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -162,8 +162,10 @@
     <ClInclude Include="..\3rdparty\include\WinRoaming\reflect.hpp" />
     <ClInclude Include="..\3rdparty\include\WinRoaming\Singleton.hpp" />
     <ClInclude Include="AdminWindow.h" />
+    <ClInclude Include="ChildWindow.hpp" />
     <ClInclude Include="Data.hpp" />
     <ClInclude Include="FanWindow.h" />
+    <ClInclude Include="helperWindows.hpp" />
     <ClInclude Include="init.hpp" />
     <ClInclude Include="LoginWindow.h" />
     <ClInclude Include="MemberWindow.h" />
