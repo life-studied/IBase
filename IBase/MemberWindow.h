@@ -36,7 +36,13 @@ namespace IBase
 			void initAlbums();
 			void initFans();
 			void initConcerts();
+
 			void quitBand();
+
+			void clearAll();
+
+			void backBand();
+			bool attendBand();
 		};
 
 	}

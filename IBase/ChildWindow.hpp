@@ -26,12 +26,16 @@ namespace IBase
 			void setName(string _name) { name = _name; }
 			void setLabels(vector<string> _labels) { labels = _labels; }
 			void setData(vector < VData<v_num>>* _data) { data = _data; }
+			auto selected_str_by_index(size_t i)
+			{
+				return selectedData.strs[i];
+			}
 
-			void showList()
+			void showList(size_t idx = 0)
 			{
 				BeginListBox(name.c_str());
 				for (auto& i : *data)
-					if (Selectable(i.strs[0].c_str(), true))
+					if (Selectable(i.strs[idx].c_str(), true))
 					{
 						windowShow = true;
 						selectedData = i;

@@ -4,15 +4,21 @@
 #include "sqlpre.h"
 #include "LoginWindow.h"
 #include "helperWindows.hpp"
+#include "ChildWindow.hpp"
+
 using namespace DBConn::MysqlOP;
 using namespace SqlStr;
 using namespace std;
 using namespace ImGui;
 using namespace IBase::helperWindows;
+using namespace IBase::WidgetTools;
+
 string IBase::IWindows::MemberWindow::drawNext(unordered_map<string, Window*>& windowlist)
 {
     static bool clear = false;
     static bool isQuitBand = false;
+    static bool isAttendBand = false;
+    static bool isBackBand = false;
     static string account{}, password{};
     if (!clear)
     {
@@ -29,6 +35,8 @@ string IBase::IWindows::MemberWindow::drawNext(unordered_map<string, Window*>& w
     static ListWindow<0,5> fansWindow("fans", fans);
     static ListWindow<0,3> concertsWindow("concerts", concerts);
 	Begin("Member", &isOpen);
+    if (!InBand)
+        Text(u8"已退出！");
     if (BeginTabBar(u8"乐队"))
     {
         if (BeginTabItem(u8"主页"))
@@ -66,13 +74,35 @@ string IBase::IWindows::MemberWindow::drawNext(unordered_map<string, Window*>& w
         }
         if (BeginTabItem(u8"其它"))
         {
-            isQuitBand = Button(u8"退出该乐队");
+            if (InBand)
+                isQuitBand = Button(u8"退出该乐队");
+            else
+            {
+                isAttendBand = Button(u8"加入新乐队");
+                isBackBand = Button(u8"回归乐队");
+				static bool showAttend = false;
+				if (isAttendBand)
+				{
+					showAttend = true;
+				}
+				if (showAttend)
+				{
+                    if (attendBand())
+                    {
+                        isOpen = false;
+                    }
+						
+				}
+
+            }
+                
             EndTabItem();
         }
 
         EndTabBar();
     }
 
+	
 
 	End();
     newsWindow.showWindow({ u8"名称：",u8"时间：",u8"介绍/地点：" }, {0,1,2});
@@ -83,11 +113,21 @@ string IBase::IWindows::MemberWindow::drawNext(unordered_map<string, Window*>& w
 
     if (isQuitBand)
     {
-        
+        quitBand();
+        isOpen = false;
+    }
+    if (isBackBand)
+    {
+        backBand();
+        isOpen = false;
     }
     if (!isOpen)
     {
         clear = false;
+        isQuitBand = false;
+        isAttendBand = false;
+        isBackBand = false;
+        clearAll();
         account.clear();
         password.clear();
         return parent;
@@ -118,10 +158,12 @@ void IBase::IWindows::MemberWindow::initMember(string account, string password)
     for (size_t i = 0; i < memberdata.size(); i++)
         memberdata.strs[i] = information.content[0][i];
     memberdata.reset();
-    if (memberdata.strs[5].empty())
+    if (!memberdata.strs[5].empty())
     {
         InBand = false;
     }
+    else
+        InBand = true;
 }
 
 void IBase::IWindows::MemberWindow::initAllMembers()
@@ -227,4 +269,51 @@ void IBase::IWindows::MemberWindow::quitBand()
 {
     auto sql = paddingSql("UPDATE member SET member.leavetime=NOW() WHERE member.id=?", memberdata.strs[0]);
     MysqlOP<member>::query(sql);
+}
+
+void IBase::IWindows::MemberWindow::clearAll()
+{
+    members.clear();
+    news.clear();
+    albums.clear();
+    fans.clear();
+    concerts.clear();
+}
+
+void IBase::IWindows::MemberWindow::backBand()
+{
+    auto sql = paddingSql("UPDATE member SET member.leavetime=NULL AND member.jointime=NOW() WHERE member.id=?", memberdata.strs[0]);
+    MysqlOP<member>::query(sql);
+}
+
+bool IBase::IWindows::MemberWindow::attendBand()
+{
+    static vector<BandData> band_data = []() 
+    {
+        vector<BandData> res_band_list;
+		auto band_info_list = MysqlOP<fan>::query(paddingSql("select * from band"));
+		for (auto& line : band_info_list.content)
+		{
+			BandData temp{};
+			for (size_t i = 0; i < temp.size(); i++)
+				temp.strs[i] = line[i];
+			res_band_list.push_back(temp);
+		}
+        return res_band_list;
+    }();
+
+    static ChildWindow band_child_window(&band_data, u8"所有乐队", { u8"队伍编号：", u8"队名：",u8"创建时间：",u8"介绍：",u8"队长："});
+    band_child_window.showList(1);
+    if (band_child_window.showWindow(u8"加入"))
+    {
+        auto sql = paddingSql("UPDATE member SET member.leavetime=NULL, \
+            member.jointime=NOW(), \
+            member.bandid=(SELECT id FROM band WHERE band.name='?') \
+            WHERE member.id=?", band_child_window.selected_str_by_index(1) ,memberdata.strs[0]);
+        MysqlOP<member>::query(sql);
+        return true;
+    }
+
+    return false;
+
 }

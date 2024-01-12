@@ -122,6 +122,8 @@ string IBase::IWindows::FanWindow::drawNext(unordered_map<string, Window*>& wind
 			static vector<SongData> res_song;
 			static ChildWindow concert_child_window(&res_concert, u8"演唱会", { u8"演唱会名：",u8"时间：",u8"地点：",u8"乐队名：" });
 			static ChildWindow album_child_window(&res_album, u8"专辑", { u8"专辑名：",u8"时间：",u8"介绍：",u8"乐队名：" });
+			static ChildWindow band_child_window(&res_band, u8"乐队", { u8"队名：",u8"创建时间：",u8"介绍：",u8"队长：" });
+			static ChildWindow song_child_window(&res_song, u8"歌曲", { u8"歌曲名：",u8"作者名：",u8"专辑名：" });
 			InputText(u8" ", searchBox, IM_ARRAYSIZE(searchBox)); SameLine(); isSearchClick = Button(u8"搜索");
 			if (isSearchClick)
 			{
@@ -133,9 +135,13 @@ string IBase::IWindows::FanWindow::drawNext(unordered_map<string, Window*>& wind
 			}
 			concert_child_window.showList();
 			album_child_window.showList();
-			
+			band_child_window.showList();
+			song_child_window.showList();
+
 			concert_child_window.showWindow(u8"喜欢");
 			album_child_window.showWindow(u8"喜欢");
+			band_child_window.showWindow(u8"喜欢");
+			song_child_window.showWindow(u8"喜欢");
 			EndTabItem();
 		}
 		EndTabBar();
