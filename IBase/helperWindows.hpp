@@ -27,8 +27,9 @@ namespace IBase
 				EndListBox();
 			}
 			template <size_t label_N>
-			void showWindow(const string (&labels)[label_N], const array<size_t,label_N> indexs)
+			bool showWindow(const string(&labels)[label_N], const array<size_t, label_N> indexs)
 			{
+				bool isClick = false;
 				if (isChildWindowShow)
 				{
 					Begin(title.c_str(),&isChildWindowShow);
@@ -36,8 +37,10 @@ namespace IBase
 					{
 						Text(labels[i].c_str()); SameLine(); Text(temp.strs[indexs[i]].c_str());
 					}
+					isClick = Button(u8"É¾³ý");
 					End();
 				}
+				return isClick;
 			}
 		private:
 			bool isChildWindowShow = false;

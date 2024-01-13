@@ -5,6 +5,8 @@
 #include "MysqlOP.h"
 #include <tuple>
 #include "ChildWindow.hpp"
+#include <sstream>
+#include "MessageBox.h"
 
 using namespace std;
 using namespace ImGui;
@@ -138,10 +140,30 @@ string IBase::IWindows::FanWindow::drawNext(unordered_map<string, Window*>& wind
 			band_child_window.showList();
 			song_child_window.showList();
 
-			concert_child_window.showWindow(u8"喜欢");
-			album_child_window.showWindow(u8"喜欢");
-			band_child_window.showWindow(u8"喜欢");
-			song_child_window.showWindow(u8"喜欢");
+			auto like_concert = concert_child_window.showWindow(u8"参加");
+			auto like_album = album_child_window.showWindow(u8"喜欢");
+			auto like_band = band_child_window.showWindow(u8"喜欢");
+			auto like_song = song_child_window.showWindow(u8"喜欢");
+
+			if (like_concert)
+				insertLikeConcert(concert_child_window.selected_str_by_index(0));
+			if (like_album)
+				insertLikeAlbum(album_child_window.selected_str_by_index(0));
+			if (like_band)
+				insertLikeBand(band_child_window.selected_str_by_index(0));
+			if (like_song)
+				insertLikeSong(song_child_window.selected_str_by_index(0));
+			static EvalutionData e_data;
+			
+			if(album_child_window.ifChanged())
+				e_data = check_evalution(album_child_window.selected_str_by_index(0));
+
+			// evaluate the album window
+			if (album_child_window.ifClicked())
+			{
+				showEvaluaion(album_child_window.selected_str_by_index(0), e_data);
+			}
+
 			EndTabItem();
 		}
 		EndTabBar();
@@ -312,25 +334,49 @@ void IBase::IWindows::FanWindow::initConcertData()
 
 void IBase::IWindows::FanWindow::insertLikeBand(string name)
 {
-	MysqlOP<fan>::query(paddingSql(""));
+	MysqlOP<fan>::query(paddingSql("INSERT INTO bandlikes(fanid,bandid)\
+		VALUES('?', (SELECT id FROM band WHERE band.name = '?'))", fandata.strs[0], name));
 }
 
 void IBase::IWindows::FanWindow::insertLikeAlbum(string name)
 {
-
+	MysqlOP<fan>::query(paddingSql("INSERT INTO albumlikes(fanid,albumid)\
+		VALUES('?', (SELECT id FROM album WHERE album.name = '?'))", fandata.strs[0], name));
 }
 
 void IBase::IWindows::FanWindow::insertLikeSong(string name)
 {
-
+	MysqlOP<fan>::query(paddingSql("INSERT INTO songlikes(fanid,songid)\
+		VALUES('?', (SELECT id FROM songs WHERE songs.name = '?'))", fandata.strs[0], name));
 }
 
 void IBase::IWindows::FanWindow::insertLikeConcert(string name)
 {
-
+	MysqlOP<fan>::query(paddingSql("INSERT INTO attendconcert(fanid,concertid)\
+		VALUES('?', (SELECT id FROM concert WHERE concert.name = '?'))", fandata.strs[0], name));
 }
 
-tuple<vector<IBase::IWindows::FanWindow::ConcertData>, 
+IBase::IWindows::FanWindow::EvalutionData IBase::IWindows::FanWindow::check_evalution(string album_name)
+{
+	EvalutionData res{};
+	auto table = MysqlOP<fan>::query(paddingSql("SELECT album.name, evaluation.score, evaluation.evaluation FROM evaluation\
+		LEFT JOIN album ON evaluation.albumid = album.id\
+		WHERE evaluation.fanid = ? AND evaluation.albumid = (select id from album WHERE name = '?')", fandata.strs[0], album_name));
+	
+	if (table.content.empty())
+		return {};
+	else
+	{
+		for (int i = 0; i < table.content[0].size(); i++)
+		{
+			res.strs[i] = table.content[0][i];
+		}
+		res.reset();
+	}
+	return res;
+}
+
+tuple<vector<IBase::IWindows::FanWindow::ConcertData>,
 	vector<IBase::IWindows::FanWindow::AlbumData>, 
 	vector<IBase::IWindows::FanWindow::SongData>, 
 	vector<IBase::IWindows::FanWindow::BandData>> 
@@ -380,8 +426,7 @@ IBase::IWindows::FanWindow::searchByName(string s)
 	}
 
 	auto band_info_list = MysqlOP<fan>::query(paddingSql(
-		"select band.name,band.createtime,band.intro,band.leader from bandlikes \
-		LEFT JOIN band ON bandlikes.bandid=band.id \
+		"select band.name,band.createtime,band.intro,band.leader from band \
 		WHERE band.name LIKE '%?%'", s));
 	for (auto& line : band_info_list.content)
 	{
@@ -395,3 +440,68 @@ IBase::IWindows::FanWindow::searchByName(string s)
 
 }
 
+void IBase::IWindows::FanWindow::showEvaluaion(string album_name, EvalutionData& e_data)
+{
+	
+	Begin(u8"评价专辑");
+	
+	static bool isChanging = false;
+	static bool showTip = false;
+	if (!isChanging)
+	{
+		Text(u8"评分："); SameLine(); Text(e_data.strs[1].c_str());
+		Text(u8"评论："); SameLine(); Text(e_data.strs[2].c_str());
+		if (Button(u8"修改"))
+			isChanging = true;
+	}
+	else
+	{
+		InputText(u8"评分", e_data.boxes[1], IM_ARRAYSIZE(e_data.boxes[1]));
+		InputText(u8"评论", e_data.boxes[2], IM_ARRAYSIZE(e_data.boxes[2]));
+		if (Button(u8"确定"))
+		{
+			auto checkillegal = [](string s)
+			{
+				stringstream ss{ s };
+				int data;
+				ss >> data;
+				if (data >= 1 && data <= 5)
+					return data;
+				else
+					return -1;
+			};
+
+			if (checkillegal(e_data.boxes[1]) == -1)
+			{
+				showTip = true;
+			}
+			else
+			{
+				e_data.copy();
+				// insert or update
+				if (e_data.strs[1].empty())
+				{
+					MysqlOP<fan>::query(paddingSql("insert into evaluation(fanid,score,evaluation,albumid) \
+					values(?, ?, '?', (select id from album WHERE name = '?'))",
+						fandata.strs[0], e_data.strs[1], e_data.strs[2], album_name));
+				}
+				else
+				{
+					MysqlOP<fan>::query(paddingSql("UPDATE evaluation set score=?, evaluation='?'\
+						WHERE fanid = ? AND albumid = (select id from album WHERE name = '?')",
+						e_data.strs[1], e_data.strs[2], fandata.strs[0], album_name));
+				}
+
+				isChanging = false;
+				
+			}
+
+		}
+	}
+	if (showTip)
+	{
+		if (IMMessageBox(u8"评分错误：必须是0-5之间的数字").isClick())
+			showTip = false;
+	}
+	End();
+}

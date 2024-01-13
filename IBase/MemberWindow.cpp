@@ -29,11 +29,17 @@ string IBase::IWindows::MemberWindow::drawNext(unordered_map<string, Window*>& w
         clear = true;
     }
 	bool isOpen = true;
-    static ListWindow<0,3> newsWindow("news", news);
-    static ListWindow<1,7> membersWindow("members", members);
-    static ListWindow<1,5> albumsWindow("albums", albums);
-    static ListWindow<0,5> fansWindow("fans", fans);
-    static ListWindow<0,3> concertsWindow("concerts", concerts);
+    static ChildWindow news_child_window(&news, u8"新闻", {u8"名称：",u8"时间：",u8"介绍/地点："});
+    static ChildWindow members_child_window(&members, u8"成员", { u8"姓名：", u8"性别：", u8"职责：",u8"加入时间",u8"离开时间",u8"所属乐队：" });
+    static ChildWindow albums_child_window(&albums, u8"专辑", { u8"专辑名称：",u8"发售时间：",u8"介绍：",u8"主唱乐队：" });
+    static ChildWindow concerts_child_window(&concerts,u8"演唱会", { u8"演唱会名称：",u8"地点",u8"时间" });
+    static ChildWindow fans_child_window(&fans, u8"粉丝", { u8"粉丝姓名：",u8"性别：",u8"年龄：",u8"职业：",u8"学历：" });
+
+    //static ListWindow<0,3> newsWindow("news", news);
+    //static ListWindow<1,7> membersWindow("members", members);
+    //static ListWindow<1,5> albumsWindow("albums", albums);
+    //static ListWindow<0,5> fansWindow("fans", fans);
+    //static ListWindow<0,3> concertsWindow("concerts", concerts);
 	Begin("Member", &isOpen);
     if (!InBand)
         Text(u8"已退出！");
@@ -45,31 +51,31 @@ string IBase::IWindows::MemberWindow::drawNext(unordered_map<string, Window*>& w
             Text(lables[0].c_str()); SameLine(); Text(banddata.strs[1].c_str());
             Text(lables[1].c_str()); SameLine(); Text(banddata.strs[3].c_str());
             Text(lables[2].c_str());
-            newsWindow.showList();
+            news_child_window.showList();
             EndTabItem();
         }
 
         if (BeginTabItem(u8"成员"))
         {
-            membersWindow.showList();
+            members_child_window.showList(1);
             EndTabItem();
         }
 
         if (BeginTabItem(u8"专辑"))
         {
-            albumsWindow.showList();
+            albums_child_window.showList(1);
             EndTabItem();
         }
 
         if (BeginTabItem(u8"歌迷"))
         {
-            fansWindow.showList();
+            fans_child_window.showList();
             EndTabItem();
         }
 
         if (BeginTabItem(u8"演唱会"))
         {
-            concertsWindow.showList();
+            concerts_child_window.showList();
             EndTabItem();
         }
         if (BeginTabItem(u8"其它"))
@@ -105,11 +111,11 @@ string IBase::IWindows::MemberWindow::drawNext(unordered_map<string, Window*>& w
 	
 
 	End();
-    newsWindow.showWindow({ u8"名称：",u8"时间：",u8"介绍/地点：" }, {0,1,2});
-    membersWindow.showWindow({ u8"姓名：", u8"性别：", u8"职责：",u8"加入时间",u8"离开时间",u8"所属乐队："}, {1,2,3,4,5,6});
-    albumsWindow.showWindow({ u8"专辑名称：",u8"发售时间：",u8"介绍：",u8"主唱乐队：" }, { 1,2,3,4 });
-    fansWindow.showWindow({ u8"粉丝姓名：",u8"性别：",u8"年龄：",u8"职业：",u8"学历：" }, { 0,1,2,3,4 });
-    concertsWindow.showWindow({ u8"演唱会名称：",u8"地点",u8"时间" }, { 0,1,2 });
+    auto new_del = news_child_window.showWindow(u8"删除");
+    auto album_del = albums_child_window.showWindow(u8"删除", true);
+    auto member_del = members_child_window.showWindow(u8"删除", true);
+    auto concert_del = concerts_child_window.showWindow(u8"删除");
+    fans_child_window.showWindow();
 
     if (isQuitBand)
     {

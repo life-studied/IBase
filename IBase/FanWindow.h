@@ -16,6 +16,7 @@ namespace IBase
 			using AlbumData = VData<4>;
 			using SongData = VData<3>;
 			using ConcertData = VData<4>;
+			using EvalutionData = VData<3>;
 		public:
 			FanWindow(string name = "Fan", string _parent = "Login") :Window(name, _parent) {}
 			virtual string drawNext(unordered_map<string, Window*>& windowlist) override;
@@ -25,7 +26,6 @@ namespace IBase
 			std::vector<AlbumData> albumlikes;
 			std::vector<SongData> songlikes;
 			std::vector<ConcertData> concertattends;
-			
 		private:
 			void init(string account, string password);
 			void initFanData(string account, string passwords);
@@ -39,11 +39,17 @@ namespace IBase
 			void insertLikeSong(string name);
 			void insertLikeConcert(string name);
 
+			EvalutionData check_evalution(string album_name);
 			tuple<vector<IBase::IWindows::FanWindow::ConcertData>,
 				vector<IBase::IWindows::FanWindow::AlbumData>,
 				vector<IBase::IWindows::FanWindow::SongData>,
 				vector<IBase::IWindows::FanWindow::BandData>> 
 				searchByName(string s);
+
+			void showEvaluaion(string album_name, EvalutionData& e_data);
+
+		private:
+			bool isInit = false;
 		};
 
 	}

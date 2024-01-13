@@ -169,6 +169,7 @@
     <ClInclude Include="init.hpp" />
     <ClInclude Include="LoginWindow.h" />
     <ClInclude Include="MemberWindow.h" />
+    <ClInclude Include="MessageBox.h" />
     <ClInclude Include="RegisterSuccessWindow.h" />
     <ClInclude Include="RegisterWindow.h" />
     <ClInclude Include="sqlpre.h" />

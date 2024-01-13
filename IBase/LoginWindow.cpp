@@ -73,9 +73,16 @@ std::string IBase::IWindows::LoginWindow::drawNext(unordered_map<string, Window*
 		auto level = checkPass();
 		if (level == userLevel::None)
 			label = u8"账号或密码错误";
+		else if(static_cast<unsigned char>(level) != selected)
+		{
+			label = u8"账号不存在";
+		}
 		else
-			label = "";
-		return levelMap[level];
+		{
+			label.clear();
+			return levelMap[level];
+		}
+		
 	}
 	
 	// go to register window
