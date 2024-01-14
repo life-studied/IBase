@@ -11,18 +11,11 @@ namespace IBase
 		class IMMessageBox
 		{
 		public:
-			IMMessageBox(string s)
-			{
-				bool isOpen = true;
-				Begin(u8"提示", &isOpen);
-				Text(s.c_str());
-				isClicked = Button(u8"确定");
-				End();
-			}
+			IMMessageBox(string s);
 		private:
 			bool isClicked = false;
 		public:
-			bool isClick() { return isClicked; };
+			bool isClick();
 		};
 	}
 }

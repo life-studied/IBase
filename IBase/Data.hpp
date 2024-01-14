@@ -27,6 +27,13 @@ namespace IBase
 				}
 			}
 			inline static auto size() { return N; }
+
+			inline void clear()
+			{
+				for (auto& i : strs)
+					i.clear();
+				reset();
+			}
 		};
 
 		template <typename T>

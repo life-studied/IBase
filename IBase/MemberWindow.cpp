@@ -5,6 +5,8 @@
 #include "LoginWindow.h"
 #include "helperWindows.hpp"
 #include "ChildWindow.hpp"
+#include "InfoBoxes.h"
+#include "AddNewWindow.hpp"
 
 using namespace DBConn::MysqlOP;
 using namespace SqlStr;
@@ -34,12 +36,8 @@ string IBase::IWindows::MemberWindow::drawNext(unordered_map<string, Window*>& w
     static ChildWindow albums_child_window(&albums, u8"专辑", { u8"专辑名称：",u8"发售时间：",u8"介绍：",u8"主唱乐队：" });
     static ChildWindow concerts_child_window(&concerts,u8"演唱会", { u8"演唱会名称：",u8"地点",u8"时间" });
     static ChildWindow fans_child_window(&fans, u8"粉丝", { u8"粉丝姓名：",u8"性别：",u8"年龄：",u8"职业：",u8"学历：" });
+    static ChildWindow songs_child_window(&fans, u8"歌曲", { u8"歌曲名", u8"从属专辑" });
 
-    //static ListWindow<0,3> newsWindow("news", news);
-    //static ListWindow<1,7> membersWindow("members", members);
-    //static ListWindow<1,5> albumsWindow("albums", albums);
-    //static ListWindow<0,5> fansWindow("fans", fans);
-    //static ListWindow<0,3> concertsWindow("concerts", concerts);
 	Begin("Member", &isOpen);
     if (!InBand)
         Text(u8"已退出！");
@@ -47,11 +45,27 @@ string IBase::IWindows::MemberWindow::drawNext(unordered_map<string, Window*>& w
     {
         if (BeginTabItem(u8"主页"))
         {
-            static const string lables[] = { u8"乐队名：",u8"乐队介绍：",u8"新闻" };
+            static const string lables[] = { u8"乐队名：",u8"乐队介绍：",u8"最新动态（演唱会/歌曲/专辑发布）" };
             Text(lables[0].c_str()); SameLine(); Text(banddata.strs[1].c_str());
             Text(lables[1].c_str()); SameLine(); Text(banddata.strs[3].c_str());
             Text(lables[2].c_str());
             news_child_window.showList();
+            EndTabItem();
+        }
+
+        if (BeginTabItem(u8"个人信息"))
+        {
+            static vector<string> self_labels = { u8"编号",u8"姓名",u8"性别",u8"职责",u8"加入时间",u8"离开时间",u8"所属乐队" };
+            static InfoBoxes selfInfo(self_labels, &memberdata);
+            selfInfo.show();
+            if (selfInfo.ToChange())
+            {
+
+            }
+            if (selfInfo.ToCorrect())
+            {
+                updateSelfInfo();
+            }
             EndTabItem();
         }
 
@@ -64,6 +78,26 @@ string IBase::IWindows::MemberWindow::drawNext(unordered_map<string, Window*>& w
         if (BeginTabItem(u8"专辑"))
         {
             albums_child_window.showList(1);
+            static AddNewWindow<AlbumData> album_add({ u8"专辑名称" ,u8"发售时间" ,u8"介绍" ,u8"主唱乐队" });
+            album_add.show();
+            auto res = album_add.getData();
+            if (res.has_value())
+            {
+                addAlbum(res.value());
+            }
+            EndTabItem();
+        }
+
+        if (BeginTabItem(u8"歌曲"))
+        {
+            songs_child_window.showList();
+            static AddNewWindow<SongData> song_add({ u8"歌曲名", u8"从属专辑" });
+            song_add.show();
+            auto res = song_add.getData();
+            if (res.has_value())
+            {
+                addSong(res.value());
+            }
             EndTabItem();
         }
 
@@ -111,11 +145,51 @@ string IBase::IWindows::MemberWindow::drawNext(unordered_map<string, Window*>& w
 	
 
 	End();
-    auto new_del = news_child_window.showWindow(u8"删除");
-    auto album_del = albums_child_window.showWindow(u8"删除", true);
-    auto member_del = members_child_window.showWindow(u8"删除", true);
-    auto concert_del = concerts_child_window.showWindow(u8"删除");
+
+    news_child_window.showWindow();
+    auto album_b_datas = albums_child_window.showWindow({ u8"查看歌迷", u8"删除"}, true);
+    members_child_window.showWindow(true);
+    auto concert_del = concerts_child_window.showWindow({ u8"查看歌迷",u8"删除" });
     fans_child_window.showWindow();
+    auto song_b_datas = songs_child_window.showWindow({ u8"查看歌迷",u8"删除" });
+    
+    
+    static vector<FanData> like_fans_album;
+    static ChildWindow like_fans_album_child_window(&like_fans_album, u8"粉丝信息", { u8"粉丝姓名：",u8"性别：",u8"年龄：",u8"职业：",u8"学历：" });
+    static vector<FanData> like_fans_song;
+    static ChildWindow like_fans_song_child_window(&like_fans_song, u8"粉丝信息", { u8"粉丝姓名：",u8"性别：",u8"年龄：",u8"职业：",u8"学历：" });
+	static vector<FanData> like_fans_concert;
+	static ChildWindow like_fans_concert_child_window(&like_fans_concert, u8"粉丝信息", { u8"粉丝姓名：",u8"性别：",u8"年龄：",u8"职业：",u8"学历：" });
+
+    
+	// 查看粉丝
+    static bool show_album_fan = false;
+    if (!album_b_datas.empty())
+        if(album_b_datas[0])
+            show_album_fan = true;
+    if (show_album_fan)
+    {
+        searchFans("album", )
+		Begin(u8"查看相关粉丝");
+		like_fans_album_child_window.showList();
+        like_fans_album_child_window.showWindow();
+        if (like_fans_album_child_window.ifClicked())
+            show_album_fan = false;
+        End();
+    }
+	
+
+	//// 查看粉丝
+ //   static bool show_songs_fan = false;
+	//Begin(u8"查看相关粉丝");
+	//like_fans_album_child_window.showList();
+	//End();
+ //   
+	//// 查看粉丝
+ //   static bool show_concert_fan = false;
+	//Begin(u8"查看相关粉丝");
+	//like_fans_concert_child_window.showList();
+	//End();
 
     if (isQuitBand)
     {
@@ -152,6 +226,7 @@ void IBase::IWindows::MemberWindow::init(string account, string password)
         initAlbums();
         initFans();
         initConcerts();
+        initSongs();
     }
 }
 
@@ -271,6 +346,12 @@ void IBase::IWindows::MemberWindow::initConcerts()
     }
 }
 
+void IBase::IWindows::MemberWindow::initSongs()
+{
+    auto sql = paddingSql("");
+    MysqlOP<member>::query(sql);
+}
+
 void IBase::IWindows::MemberWindow::quitBand()
 {
     auto sql = paddingSql("UPDATE member SET member.leavetime=NOW() WHERE member.id=?", memberdata.strs[0]);
@@ -288,7 +369,7 @@ void IBase::IWindows::MemberWindow::clearAll()
 
 void IBase::IWindows::MemberWindow::backBand()
 {
-    auto sql = paddingSql("UPDATE member SET member.leavetime=NULL AND member.jointime=NOW() WHERE member.id=?", memberdata.strs[0]);
+    auto sql = paddingSql("UPDATE member SET member.leavetime=NULL, member.jointime=NOW() WHERE member.id=?", memberdata.strs[0]);
     MysqlOP<member>::query(sql);
 }
 
@@ -297,7 +378,7 @@ bool IBase::IWindows::MemberWindow::attendBand()
     static vector<BandData> band_data = []() 
     {
         vector<BandData> res_band_list;
-		auto band_info_list = MysqlOP<fan>::query(paddingSql("select * from band"));
+		auto band_info_list = MysqlOP<member>::query(paddingSql("select * from band"));
 		for (auto& line : band_info_list.content)
 		{
 			BandData temp{};
@@ -322,4 +403,51 @@ bool IBase::IWindows::MemberWindow::attendBand()
 
     return false;
 
+}
+
+void IBase::IWindows::MemberWindow::updateSelfInfo()
+{
+    // update member table and account table
+    auto sql = paddingSql("UPDATE member \
+                left join account on member.`name`=account.username \
+                SET member.name='?',member.sex='?',member.duty='?', account.username='?' WHERE member.id=?",
+        memberdata.strs[1],
+        memberdata.strs[2],
+        memberdata.strs[3],
+        memberdata.strs[1],
+        memberdata.strs[0]
+    );
+    MysqlOP<member>::query(sql);
+}
+
+void IBase::IWindows::MemberWindow::addAlbum(AlbumData& data)
+{
+	auto sql = paddingSql("INSERT INTO album(`name`,time,intro,bandid)\
+		VALUES('?', NOW(), '?', (SELECT id FROM band WHERE band.name='?'))",data.strs[0],data.strs[2],banddata.strs[0]);
+    MysqlOP<member>::query(sql);
+}
+
+void IBase::IWindows::MemberWindow::addSong(SongData& data)
+{
+    auto sql = paddingSql("INSERT INTO songs(`name`,authorid,albumid)\
+		VALUES('?', ?, ?)", data.strs[0], memberdata.strs[0], data.strs[1]);
+	MysqlOP<member>::query(sql);
+}
+
+vector<IBase::IWindows::MemberWindow::FanData> IBase::IWindows::MemberWindow::searchFans(string tablename,string tableLikeName, string name)
+{
+    vector<FanData> fans;
+    auto sql = paddingSql("select fans.`name`,fans.sex,fans.age,fans.job,fans.degree from fans\
+                LEFT JOIN ? ON fans.id=?.fanid\
+                LEFT JOIN ? ON ?.id=?s.?\
+                WHERE ?.name=?", tablename, tablename, tablename, name);
+    auto table = MysqlOP<member>::query(sql);
+    for (auto& line : table.content)
+    {
+        FanData temp;
+        for (size_t i = 0; i < temp.size(); i++)
+            temp.strs[i] = line[i];
+        fans.push_back(temp);
+    }
+    return fans;
 }

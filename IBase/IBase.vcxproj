@@ -152,20 +152,24 @@
     <ClCompile Include="..\3rdparty\include\WinRoaming\WinRoam.cpp" />
     <ClCompile Include="AdminWindow.cpp" />
     <ClCompile Include="FanWindow.cpp" />
+    <ClCompile Include="InfoBoxes.cpp" />
     <ClCompile Include="LoginWindow.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MemberWindow.cpp" />
+    <ClCompile Include="MessageBox.cpp" />
     <ClCompile Include="RegisterSuccessWindow.cpp" />
     <ClCompile Include="RegisterWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\3rdparty\include\WinRoaming\reflect.hpp" />
     <ClInclude Include="..\3rdparty\include\WinRoaming\Singleton.hpp" />
+    <ClInclude Include="AddNewWindow.hpp" />
     <ClInclude Include="AdminWindow.h" />
     <ClInclude Include="ChildWindow.hpp" />
     <ClInclude Include="Data.hpp" />
     <ClInclude Include="FanWindow.h" />
     <ClInclude Include="helperWindows.hpp" />
+    <ClInclude Include="InfoBoxes.h" />
     <ClInclude Include="init.hpp" />
     <ClInclude Include="LoginWindow.h" />
     <ClInclude Include="MemberWindow.h" />

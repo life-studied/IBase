@@ -37,6 +37,9 @@
     <Filter Include="头文件\widgetTools">
       <UniqueIdentifier>{e2281772-2b5f-4fa3-a13a-c84488406299}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\widgetTools">
+      <UniqueIdentifier>{8381d573-8a1d-4b1e-8a6d-0937d0fb9707}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -99,6 +102,12 @@
     <ClCompile Include="MemberWindow.cpp">
       <Filter>源文件\windows</Filter>
     </ClCompile>
+    <ClCompile Include="MessageBox.cpp">
+      <Filter>源文件\widgetTools</Filter>
+    </ClCompile>
+    <ClCompile Include="InfoBoxes.cpp">
+      <Filter>源文件\widgetTools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="init.hpp">
@@ -144,6 +153,12 @@
       <Filter>头文件\widgetTools</Filter>
     </ClInclude>
     <ClInclude Include="MessageBox.h">
+      <Filter>头文件\widgetTools</Filter>
+    </ClInclude>
+    <ClInclude Include="InfoBoxes.h">
+      <Filter>头文件\widgetTools</Filter>
+    </ClInclude>
+    <ClInclude Include="AddNewWindow.hpp">
       <Filter>头文件\widgetTools</Filter>
     </ClInclude>
   </ItemGroup>

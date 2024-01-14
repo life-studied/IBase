@@ -16,6 +16,7 @@ namespace IBase
 			using AlbumData = VData<5>;
 			using FanData = VData<5>;
 			using ConcertData = VData<3>;
+			using SongData = VData<2>;
 		public:
 			MemberWindow(string name = "Member", string _parent = "Login") :Window(name, _parent) {}
 			virtual string drawNext(unordered_map<string, Window*>& windowlist) override;
@@ -28,6 +29,8 @@ namespace IBase
 			vector<AlbumData> albums;
 			vector<FanData> fans;
 			vector<ConcertData> concerts;
+
+			// 初始化成员信息
 			void init(string account, string password);
 			void initMember(string account,string password);
 			void initAllMembers();
@@ -36,6 +39,7 @@ namespace IBase
 			void initAlbums();
 			void initFans();
 			void initConcerts();
+			void initSongs();
 
 			void quitBand();
 
@@ -43,6 +47,13 @@ namespace IBase
 
 			void backBand();
 			bool attendBand();
+
+			void updateSelfInfo();
+
+			void addAlbum(AlbumData &data);
+			void addSong(SongData &data);
+
+			vector<FanData> searchFans(string tablename, string id);
 		};
 
 	}

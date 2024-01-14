@@ -2,11 +2,16 @@
 #include <optional>
 #include "imgui.h"
 #include "Data.hpp"
+#include <vector>
+#include <string>
+
 namespace IBase
 {
 	namespace WidgetTools
 	{
 		using std::optional;
+		using std::vector;
+		using std::string;
 		using namespace ImGui;
 		using namespace Data;
 		template <size_t v_num>
@@ -59,8 +64,9 @@ namespace IBase
 				EndListBox();
 			}
 
-			bool showWindow(string s, bool skip = false)
+			bool showWindow(const char* str, bool skip = false)
 			{
+				string s(str);
 				if (windowShow)
 				{
 					Begin(name.c_str(), &windowShow);
@@ -88,6 +94,38 @@ namespace IBase
 				}
 			}
 
+			void showWindow(bool skip)
+			{
+				if (windowShow)
+				{
+					Begin(name.c_str(), &windowShow);
+					for (size_t j = (skip ? 1 : 0), i = 0; i < labels.size(); i++, j++)
+					{
+						Text(labels[i].c_str()); SameLine(); Text(selectedData.strs[j].c_str());
+					}
+					End();
+				}
+			}
+
+			vector<bool> showWindow(vector<string>&& button_names, bool skip = false)
+			{
+				vector<bool> res_data{};
+				if (windowShow)
+				{
+					Begin(name.c_str(), &windowShow);
+					for (size_t j = (skip ? 1 : 0), i = 0; i < labels.size(); i++, j++)
+					{
+						Text(labels[i].c_str()); SameLine(); Text(selectedData.strs[j].c_str());
+					}
+					for (auto& i : button_names)
+					{
+						auto isClick = Button(i.c_str()); SameLine();
+						res_data.push_back(isClick);
+					}
+					End();
+				}
+				return res_data;
+			}
 		};
 	}
 }
