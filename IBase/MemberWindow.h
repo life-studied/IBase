@@ -29,6 +29,7 @@ namespace IBase
 			vector<AlbumData> albums;
 			vector<FanData> fans;
 			vector<ConcertData> concerts;
+			vector<SongData> songs;
 
 			// 初始化成员信息
 			void init(string account, string password);
@@ -52,8 +53,15 @@ namespace IBase
 
 			void addAlbum(AlbumData &data);
 			void addSong(SongData &data);
+			void addConcert(ConcertData &data);
 
-			vector<FanData> searchFans(string tablename, string id);
+			vector<FanData> searchFansBySong(string name);
+			vector<FanData> searchFansByConcert(string name);
+			vector<FanData> searchFansByAlbum(string name);
+
+			void deleteSongByName(string name);
+			void deleteConcertByName(string name);
+			void deleteAlbumByName(string name);
 		};
 
 	}

@@ -108,6 +108,9 @@
     <ClCompile Include="InfoBoxes.cpp">
       <Filter>源文件\widgetTools</Filter>
     </ClCompile>
+    <ClCompile Include="EvaluationListWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="init.hpp">
@@ -159,6 +162,9 @@
       <Filter>头文件\widgetTools</Filter>
     </ClInclude>
     <ClInclude Include="AddNewWindow.hpp">
+      <Filter>头文件\widgetTools</Filter>
+    </ClInclude>
+    <ClInclude Include="EvaluationListWindow.h">
       <Filter>头文件\widgetTools</Filter>
     </ClInclude>
   </ItemGroup>

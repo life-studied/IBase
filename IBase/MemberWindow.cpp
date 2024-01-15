@@ -7,6 +7,7 @@
 #include "ChildWindow.hpp"
 #include "InfoBoxes.h"
 #include "AddNewWindow.hpp"
+#include "EvaluationListWindow.h"
 
 using namespace DBConn::MysqlOP;
 using namespace SqlStr;
@@ -36,7 +37,7 @@ string IBase::IWindows::MemberWindow::drawNext(unordered_map<string, Window*>& w
     static ChildWindow albums_child_window(&albums, u8"专辑", { u8"专辑名称：",u8"发售时间：",u8"介绍：",u8"主唱乐队：" });
     static ChildWindow concerts_child_window(&concerts,u8"演唱会", { u8"演唱会名称：",u8"地点",u8"时间" });
     static ChildWindow fans_child_window(&fans, u8"粉丝", { u8"粉丝姓名：",u8"性别：",u8"年龄：",u8"职业：",u8"学历：" });
-    static ChildWindow songs_child_window(&fans, u8"歌曲", { u8"歌曲名", u8"从属专辑" });
+    static ChildWindow songs_child_window(&songs, u8"歌曲", { u8"歌曲名", u8"从属专辑" });
 
 	Begin("Member", &isOpen);
     if (!InBand)
@@ -110,6 +111,13 @@ string IBase::IWindows::MemberWindow::drawNext(unordered_map<string, Window*>& w
         if (BeginTabItem(u8"演唱会"))
         {
             concerts_child_window.showList();
+			static AddNewWindow<ConcertData> concert_add({ u8"演唱会名字" ,u8"发售时间" ,u8"地点" });
+            concert_add.show();
+			auto res = concert_add.getData();
+			if (res.has_value())
+			{
+				addConcert(res.value());
+			}
             EndTabItem();
         }
         if (BeginTabItem(u8"其它"))
@@ -142,54 +150,113 @@ string IBase::IWindows::MemberWindow::drawNext(unordered_map<string, Window*>& w
         EndTabBar();
     }
 
-	
+	news_child_window.showWindow();
+	auto album_b_datas = albums_child_window.showWindow({ u8"查看歌迷", u8"查看评分和评论", u8"删除"}, true);
+	members_child_window.showWindow(true);
+	auto concert_b_datas = concerts_child_window.showWindow({ u8"查看歌迷",u8"删除" });
+	fans_child_window.showWindow();
+	auto song_b_datas = songs_child_window.showWindow({ u8"查看歌迷",u8"删除" });
 
-	End();
 
-    news_child_window.showWindow();
-    auto album_b_datas = albums_child_window.showWindow({ u8"查看歌迷", u8"删除"}, true);
-    members_child_window.showWindow(true);
-    auto concert_del = concerts_child_window.showWindow({ u8"查看歌迷",u8"删除" });
-    fans_child_window.showWindow();
-    auto song_b_datas = songs_child_window.showWindow({ u8"查看歌迷",u8"删除" });
-    
-    
-    static vector<FanData> like_fans_album;
-    static ChildWindow like_fans_album_child_window(&like_fans_album, u8"粉丝信息", { u8"粉丝姓名：",u8"性别：",u8"年龄：",u8"职业：",u8"学历：" });
-    static vector<FanData> like_fans_song;
-    static ChildWindow like_fans_song_child_window(&like_fans_song, u8"粉丝信息", { u8"粉丝姓名：",u8"性别：",u8"年龄：",u8"职业：",u8"学历：" });
+	static vector<FanData> like_fans_album;
+	static ChildWindow like_fans_album_child_window(&like_fans_album, u8"粉丝信息", { u8"粉丝姓名：",u8"性别：",u8"年龄：",u8"职业：",u8"学历：" });
+	static vector<FanData> like_fans_song;
+	static ChildWindow like_fans_song_child_window(&like_fans_song, u8"粉丝信息", { u8"粉丝姓名：",u8"性别：",u8"年龄：",u8"职业：",u8"学历：" });
 	static vector<FanData> like_fans_concert;
 	static ChildWindow like_fans_concert_child_window(&like_fans_concert, u8"粉丝信息", { u8"粉丝姓名：",u8"性别：",u8"年龄：",u8"职业：",u8"学历：" });
 
-    
-	// 查看粉丝
-    static bool show_album_fan = false;
-    if (!album_b_datas.empty())
-        if(album_b_datas[0])
-            show_album_fan = true;
-    if (show_album_fan)
-    {
-        searchFans("album", )
-		Begin(u8"查看相关粉丝");
-		like_fans_album_child_window.showList();
-        like_fans_album_child_window.showWindow();
-        if (like_fans_album_child_window.ifClicked())
-            show_album_fan = false;
-        End();
-    }
-	
+	// 查看album粉丝
+	static bool show_album_fan = false;
+	if (!album_b_datas.empty())
+	{
+		if (album_b_datas[0])
+			show_album_fan = true;
+	}
 
-	//// 查看粉丝
- //   static bool show_songs_fan = false;
-	//Begin(u8"查看相关粉丝");
-	//like_fans_album_child_window.showList();
-	//End();
- //   
-	//// 查看粉丝
- //   static bool show_concert_fan = false;
-	//Begin(u8"查看相关粉丝");
-	//like_fans_concert_child_window.showList();
-	//End();
+	if (albums_child_window.ifChanged())
+	{
+		like_fans_album = searchFansByAlbum(albums_child_window.selected_str_by_index(1));
+	}
+
+	if (show_album_fan)
+	{
+		Begin(u8"查看album相关粉丝", &show_album_fan);
+		like_fans_album_child_window.showList();
+		like_fans_album_child_window.showWindow();
+		End();
+	}
+
+	// 查看song粉丝
+	static bool show_song_fan = false;
+	if (!song_b_datas.empty())
+	{
+		if (song_b_datas[0])
+			show_song_fan = true;
+	}
+
+	if (songs_child_window.ifChanged())
+	{
+		like_fans_song = searchFansBySong(songs_child_window.selected_str_by_index(0));
+	}
+
+	if (show_song_fan)
+	{
+		Begin(u8"查看song相关粉丝", &show_song_fan);
+		like_fans_song_child_window.showList();
+		like_fans_song_child_window.showWindow();
+		End();
+	}
+
+	// 查看concert粉丝
+	static bool show_concert_fan = false;
+	if (!concert_b_datas.empty())
+	{
+		if (concert_b_datas[0])
+			show_concert_fan = true;
+	}
+
+	if (concerts_child_window.ifChanged())
+	{
+		like_fans_concert = searchFansByConcert(concerts_child_window.selected_str_by_index(0));
+	}
+
+	if (show_concert_fan)
+	{
+		Begin(u8"查看concert相关粉丝", &show_concert_fan);
+		like_fans_concert_child_window.showList();
+		like_fans_concert_child_window.showWindow();
+		End();
+	}
+
+    // 删除song data
+	if (!song_b_datas.empty())
+	{
+        if (song_b_datas[1])
+            deleteSongByName(songs_child_window.selected_str_by_index(0));
+	}
+    // 删除album data
+	if (!album_b_datas.empty())
+	{
+		if (album_b_datas[2])
+			deleteAlbumByName(albums_child_window.selected_str_by_index(1));
+	}
+    // 删除concert data
+	if (!concert_b_datas.empty())
+	{
+		if (concert_b_datas[1])
+			deleteConcertByName(concerts_child_window.selected_str_by_index(0));
+	}
+
+    // 查看专辑相关信息
+    static EvaluationListWindow evaluation_window;
+    static bool album_evalu_show = false;
+    if (!album_b_datas.empty())
+        if (album_b_datas[1])
+            album_evalu_show = true;
+    evaluation_window.showWindow(albums_child_window.selected_str_by_index(1), album_evalu_show);
+
+	End();
+
 
     if (isQuitBand)
     {
@@ -249,6 +316,7 @@ void IBase::IWindows::MemberWindow::initMember(string account, string password)
 
 void IBase::IWindows::MemberWindow::initAllMembers()
 {
+    members.clear();
     auto sql = paddingSql("select * from member where bandid=?", memberdata.strs[6]);
     auto information = MysqlOP<member>::query(sql);
     for (size_t i = 0; i < information.content.size(); i++)
@@ -298,6 +366,7 @@ void IBase::IWindows::MemberWindow::initAlbums()
 {
     auto sql = paddingSql("select * from album where album.bandid=?", memberdata.strs[6]);
     auto information = MysqlOP<member>::query(sql);
+    albums.clear();
     for (size_t i = 0; i < information.content.size(); i++)
     {
         AlbumData temp{};
@@ -305,8 +374,8 @@ void IBase::IWindows::MemberWindow::initAlbums()
         {
             temp.strs[j] = information.content[i][j];
         }
+        temp.reset();
         albums.push_back(temp);
-        albums[i].reset();
     }
 }
 
@@ -318,6 +387,7 @@ void IBase::IWindows::MemberWindow::initFans()
         LEFT JOIN bandlikes ON fans.id = bandlikes.fanid\
     where bandlikes.bandid = ? ", memberdata.strs[6]);
     auto information = MysqlOP<member>::query(sql);
+    fans.clear();
     for (size_t i = 0; i < information.content.size(); i++)
     {
         FanData temp{};
@@ -325,8 +395,8 @@ void IBase::IWindows::MemberWindow::initFans()
         {
             temp.strs[j] = information.content[i][j];
         }
+        temp.reset();
         fans.push_back(temp);
-        fans[i].reset();
     }
 }
 
@@ -334,6 +404,7 @@ void IBase::IWindows::MemberWindow::initConcerts()
 {
     auto sql = paddingSql("SELECT concert.`name`,concert.place,concert.time FROM concert WHERE concert.bandid=?", memberdata.strs[6]);
     auto information = MysqlOP<member>::query(sql);
+    concerts.clear();
     for (size_t i = 0; i < information.content.size(); i++)
     {
         ConcertData temp{};
@@ -341,15 +412,27 @@ void IBase::IWindows::MemberWindow::initConcerts()
         {
             temp.strs[j] = information.content[i][j];
         }
+        temp.reset();
         concerts.push_back(temp);
-        concerts[i].reset();
     }
 }
 
 void IBase::IWindows::MemberWindow::initSongs()
 {
-    auto sql = paddingSql("");
-    MysqlOP<member>::query(sql);
+    auto sql = paddingSql("SELECT name,albumid from songs where authorid=?",memberdata.strs[0]);
+    auto table = MysqlOP<member>::query(sql);
+    songs.clear();
+    for (auto& line : table.content)
+    {
+        SongData temp;
+        for (size_t i = 0; i < SongData::size(); i++)
+        {
+            temp.strs[i] = line[i];
+        }
+        temp.reset();
+        songs.push_back(temp);
+    }
+    
 }
 
 void IBase::IWindows::MemberWindow::quitBand()
@@ -418,29 +501,40 @@ void IBase::IWindows::MemberWindow::updateSelfInfo()
         memberdata.strs[0]
     );
     MysqlOP<member>::query(sql);
+    initAllMembers();
 }
 
 void IBase::IWindows::MemberWindow::addAlbum(AlbumData& data)
 {
 	auto sql = paddingSql("INSERT INTO album(`name`,time,intro,bandid)\
-		VALUES('?', NOW(), '?', (SELECT id FROM band WHERE band.name='?'))",data.strs[0],data.strs[2],banddata.strs[0]);
+		VALUES('?', NOW(), '?', (SELECT id FROM band WHERE band.name='?'))",data.strs[0],data.strs[2],banddata.strs[1]);
     MysqlOP<member>::query(sql);
+    initAlbums();
 }
 
 void IBase::IWindows::MemberWindow::addSong(SongData& data)
 {
     auto sql = paddingSql("INSERT INTO songs(`name`,authorid,albumid)\
-		VALUES('?', ?, ?)", data.strs[0], memberdata.strs[0], data.strs[1]);
+		VALUES('?', ?, (SELECT id FROM album WHERE album.name='?'))", data.strs[0], memberdata.strs[0], data.strs[1]);
 	MysqlOP<member>::query(sql);
+    initSongs();
 }
 
-vector<IBase::IWindows::MemberWindow::FanData> IBase::IWindows::MemberWindow::searchFans(string tablename,string tableLikeName, string name)
+void IBase::IWindows::MemberWindow::addConcert(ConcertData& data)
+{
+	auto sql = paddingSql("INSERT INTO concert(`name`,time,place,bandid)\
+		VALUES('?', NOW(), '?', ?)", data.strs[0], data.strs[2], banddata.strs[0]);
+	MysqlOP<member>::query(sql);
+	initConcerts();
+}
+
+vector<IBase::IWindows::MemberWindow::FanData> IBase::IWindows::MemberWindow::searchFansBySong(string name)
 {
     vector<FanData> fans;
     auto sql = paddingSql("select fans.`name`,fans.sex,fans.age,fans.job,fans.degree from fans\
-                LEFT JOIN ? ON fans.id=?.fanid\
-                LEFT JOIN ? ON ?.id=?s.?\
-                WHERE ?.name=?", tablename, tablename, tablename, name);
+                LEFT JOIN songlikes ON songlikes.fanid=fans.id\
+                LEFT JOIN songs ON songs.id=songlikes.songid\
+                WHERE songs.name='?'", name);
     auto table = MysqlOP<member>::query(sql);
     for (auto& line : table.content)
     {
@@ -450,4 +544,69 @@ vector<IBase::IWindows::MemberWindow::FanData> IBase::IWindows::MemberWindow::se
         fans.push_back(temp);
     }
     return fans;
+}
+
+vector<IBase::IWindows::MemberWindow::FanData> IBase::IWindows::MemberWindow::searchFansByConcert(string name)
+{
+	vector<FanData> fans;
+	auto sql = paddingSql("SELECT fans.`name`,fans.sex,fans.age,fans.job,fans.degree \
+		FROM fans, attendconcert, concert\
+		WHERE fans.id = attendconcert.fanid AND concert.id = attendconcert.concertid AND concert.`name`='?'", name);
+	auto table = MysqlOP<member>::query(sql);
+	for (auto& line : table.content)
+	{
+		FanData temp;
+		for (size_t i = 0; i < temp.size(); i++)
+			temp.strs[i] = line[i];
+		fans.push_back(temp);
+	}
+	return fans;
+}
+
+vector<IBase::IWindows::MemberWindow::FanData> IBase::IWindows::MemberWindow::searchFansByAlbum(string name)
+{
+	vector<FanData> fans;
+	auto sql = paddingSql("select fans.`name`,fans.sex,fans.age,fans.job,fans.degree from fans\
+                LEFT JOIN albumlikes ON albumlikes.fanid=fans.id\
+                LEFT JOIN album ON album.id=albumlikes.albumid\
+                WHERE album.name='?'", name);
+	auto table = MysqlOP<member>::query(sql);
+	for (auto& line : table.content)
+	{
+		FanData temp;
+		for (size_t i = 0; i < temp.size(); i++)
+			temp.strs[i] = line[i];
+		fans.push_back(temp);
+	}
+	return fans;
+}
+
+void IBase::IWindows::MemberWindow::deleteSongByName(string name)
+{
+	MysqlOP<member>::query(paddingSql("DELETE songs,songlikes FROM songs\
+        LEFT JOIN songlikes ON songs.id = songlikes.songid \
+        WHERE songs.`name`='?'", name));
+    initSongs();
+}
+
+void IBase::IWindows::MemberWindow::deleteConcertByName(string name)
+{
+	MysqlOP<member>::query(paddingSql("DELETE attendconcert FROM concert\
+		LEFT JOIN attendconcert ON concert.id = attendconcert.concertid\
+		WHERE concert.`name`='?'", name));
+	MysqlOP<member>::query(paddingSql("DELETE concert FROM concert\
+		LEFT JOIN attendconcert ON concert.id = attendconcert.concertid\
+		WHERE concert.`name`='?'", name));
+	initConcerts();
+}
+
+void IBase::IWindows::MemberWindow::deleteAlbumByName(string name)
+{
+	MysqlOP<member>::query(paddingSql("DELETE album,albumlikes,songs,songlikes FROM album \
+        LEFT JOIN albumlikes ON album.id=albumlikes.albumid \
+        LEFT JOIN songs ON songs.albumid=album.id \
+        LEFT JOIN songlikes ON songlikes.songid=songs.id \
+        WHERE album.`name`='?'", name));
+	initAlbums();
+    initSongs();
 }
