@@ -111,3 +111,7 @@ git clone git@github.com:ocornut/imgui.git
 ![image-20240116093123916](./assets/image-20240116093123916.png)
 
 ![image-20240116093132448](./assets/image-20240116093132448.png)
+
+## 感谢
+
+​	本项目是双人开发，本人负责完成C++界面设计，数据库部分与另一同学协同开发完成。
