@@ -351,6 +351,7 @@ void IBase::IWindows::MemberWindow::initNews()
     ) res\
         ORDER BY res.happentime DESC", banddata.strs[0], banddata.strs[0]);
     auto information = MysqlOP<member>::query(sql);
+    news.clear();
     for (size_t i = 0; i < information.content.size(); i++)
     {
         NewData temp{};
@@ -510,6 +511,7 @@ void IBase::IWindows::MemberWindow::addAlbum(AlbumData& data)
 		VALUES('?', NOW(), '?', (SELECT id FROM band WHERE band.name='?'))",data.strs[0],data.strs[2],banddata.strs[1]);
     MysqlOP<member>::query(sql);
     initAlbums();
+    initNews();
 }
 
 void IBase::IWindows::MemberWindow::addSong(SongData& data)
@@ -518,6 +520,7 @@ void IBase::IWindows::MemberWindow::addSong(SongData& data)
 		VALUES('?', ?, (SELECT id FROM album WHERE album.name='?'))", data.strs[0], memberdata.strs[0], data.strs[1]);
 	MysqlOP<member>::query(sql);
     initSongs();
+    initNews();
 }
 
 void IBase::IWindows::MemberWindow::addConcert(ConcertData& data)
@@ -526,6 +529,7 @@ void IBase::IWindows::MemberWindow::addConcert(ConcertData& data)
 		VALUES('?', NOW(), '?', ?)", data.strs[0], data.strs[2], banddata.strs[0]);
 	MysqlOP<member>::query(sql);
 	initConcerts();
+    initNews();
 }
 
 vector<IBase::IWindows::MemberWindow::FanData> IBase::IWindows::MemberWindow::searchFansBySong(string name)

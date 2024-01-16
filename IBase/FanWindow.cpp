@@ -61,9 +61,11 @@ string IBase::IWindows::FanWindow::drawNext(unordered_map<string, Window*>& wind
 				if (Button(u8"确定"))
 				{
 					isChanging = false;
+					auto lastName = fandata.strs[1];
 					fandata.copy();
 					MysqlOP<fan>::query(paddingSql("UPDATE fans SET name = '?', sex = '?', age = ? , job = '?', degree = '?'\
 						WHERE id = ? ", fandata.strs[1], fandata.strs[2], fandata.strs[3], fandata.strs[4], fandata.strs[5], fandata.strs[0]));
+					MysqlOP<fan>::query(paddingSql("UPDATE account SET username='?' WHERE username='?'", fandata.strs[1], lastName));
 				}
 			}
 			EndTabItem();
@@ -342,18 +344,21 @@ void IBase::IWindows::FanWindow::insertLikeAlbum(string name)
 {
 	MysqlOP<fan>::query(paddingSql("INSERT INTO albumlikes(fanid,albumid)\
 		VALUES('?', (SELECT id FROM album WHERE album.name = '?'))", fandata.strs[0], name));
+	initAlbumData();
 }
 
 void IBase::IWindows::FanWindow::insertLikeSong(string name)
 {
 	MysqlOP<fan>::query(paddingSql("INSERT INTO songlikes(fanid,songid)\
 		VALUES('?', (SELECT id FROM songs WHERE songs.name = '?'))", fandata.strs[0], name));
+	initSongData();
 }
 
 void IBase::IWindows::FanWindow::insertLikeConcert(string name)
 {
 	MysqlOP<fan>::query(paddingSql("INSERT INTO attendconcert(fanid,concertid)\
 		VALUES('?', (SELECT id FROM concert WHERE concert.name = '?'))", fandata.strs[0], name));
+	initConcertData();
 }
 
 IBase::IWindows::FanWindow::EvalutionData IBase::IWindows::FanWindow::check_evalution(string album_name)
