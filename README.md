@@ -1,11 +1,40 @@
 # IBase
 ​	一个用`C++`开发的**乐队数据管理软件**。以`ImGui`为图形界面，底层封装了`Mysql C API`连接池操作数据库。
 
+## 启动
+
+### 下载
+
+```
+git clone git@github.com:life-studied/IBase.git
+```
+
+### 附加库编译（手动编译）
+
+​	编译dll完成放入exe生成文件夹，或者设置动态链接库目录。
+
+#### jsoncpp
+
+```
+git clone git@github.com:open-source-parsers/jsoncpp.git
+```
+
+#### imgui（docking分支）
+
+```
+git clone git@github.com:ocornut/imgui.git
+```
+
+### 启动
+
+​	打开vs启动（默认RELEASE）。
+
 ## 环境说明
 
 | 环境            | 版本     | 备注                                                         |
 | --------------- | -------- | ------------------------------------------------------------ |
 | `Windows`       | `11`     | https://www.microsoft.com/zh-cn/windows/windows-11           |
+| `C++`           | `17`     | [cppreference.com](https://en.cppreference.com/w/)           |
 | `Visual Studio` | `vs2022` | [Visual Studio 2022 IDE - 适用于软件开发人员的编程工具 (microsoft.com)](https://visualstudio.microsoft.com/zh-hans/vs/) |
 | `Navicat`       | `16`     | https://navicat.com.cn/                                      |
 
@@ -17,6 +46,30 @@
 | `OpenSSL`         | 开源安全套接层协议 | `1.1.1L` | https://www.openssl.org/ https://www.xolphin.com/support/OpenSSL/OpenSSL_-_Installation_under_Windows |
 | `jsoncpp`         | `Mysql`配置文件    | `1.9.5`  | [open-source-parsers/jsoncpp: A C++ library for interacting with JSON. (github.com)](https://github.com/open-source-parsers/jsoncpp) |
 | `ImGui`           | C++ Gui库          | `1.9.0`  | [ocornut/imgui: Dear ImGui: Bloat-free Graphical User interface for C++ with minimal dependencies (github.com)](https://github.com/ocornut/imgui) |
+
+## 项目结构
+
+>3rdparty:第三方库
+>
+>> include:头文件
+>>
+>> lib:静态库
+>
+>asserts:图片资源
+>
+>docs:sql文档
+>
+>IBase:源代码目录
+>
+>>Configs:sql配置和imgui配置
+>>
+>>resources:系统资源
+>
+>LICENSE:许可证
+>
+>.gitignore:忽略配置
+>
+>README:自述文件
 
 ## 配置说明
 
@@ -39,13 +92,22 @@
 
 ### ER图
 
-### 设计图
+![ER-1](./assets/ER-1.png)
+
+![ER-2](./assets/ER-2.png)
 
 ### sql文件
 
-
+[SQL文件](docs/sql/IBase.sql)
 
 ## 前端演示
 
-![image-20231206224333534](./assets/image-20231206224333534.png)
+![image-20240116093059697](./assets/image-20240116093059697.png)
 
+![image-20240116093106770](./assets/image-20240116093106770.png)
+
+![image-20240116093116629](./assets/image-20240116093116629.png)
+
+![image-20240116093123916](./assets/image-20240116093123916.png)
+
+![image-20240116093132448](./assets/image-20240116093132448.png)
